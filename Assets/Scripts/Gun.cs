@@ -10,7 +10,7 @@ public class Gun : MonoBehaviour
     public float bulletSpeed = 20f;
     public Camera playerCam;
     public ObjectPool bulletPool;
-    public GameObject shootingPoint;
+    public Transform shootingPoint;
     void Update()
     {
         if (Input.GetButtonDown("Fire1"))
@@ -19,13 +19,32 @@ public class Gun : MonoBehaviour
         }
     }
 
-    [Obsolete("Obsolete")]
+    //[Obsolete("Obsolete")]
     void Shoot()
     {
-        GameObject bullet  = bulletPool.GetObject();
-        bullet.transform.position = shootingPoint.transform.position;
-        bullet.transform.rotation = shootingPoint.transform.rotation;
+        Ray camRay = playerCam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        Vector3 targetPoint;
+        RaycastHit hit;
+        if (Physics.Raycast(camRay, out hit, range))
+        {
+            targetPoint = hit.point;
+        }
+        else
+        {
+            targetPoint = camRay.origin + camRay.direction * range;
+        }
         
+        GameObject bullet  = bulletPool.GetObject();
+        bullet.transform.position = shootingPoint.position;
+        //bullet.transform.rotation = shootingPoint.transform.rotation;
+        Vector3 direction = (targetPoint - shootingPoint.position).normalized;
+
+        if (Vector3.Distance(shootingPoint.position, targetPoint) < 0.1f)
+        {
+            direction = playerCam.transform.forward; 
+        }
+        
+        bullet.transform.rotation = Quaternion.LookRotation(direction);
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
 
         if (rb != null)
@@ -42,7 +61,7 @@ public class Gun : MonoBehaviour
             bulletScript.lifeTime = 5f;
         }
 
-        StartCoroutine(DeactivateBullet(bullet));
+       // StartCoroutine(DeactivateBullet(bullet));
 
         /*RaycastHit hit;
         if (Physics.Raycast(playerCam.transform.position, playerCam.transform.forward, out hit, range))
@@ -52,9 +71,9 @@ public class Gun : MonoBehaviour
 
     }
 
-    IEnumerator DeactivateBullet(GameObject bullet)
+   /* IEnumerator DeactivateBullet(GameObject bullet)
     {
         yield return new WaitForSeconds(2f);
         bulletPool.ReturnObject(bullet);
-    }
+    }*/
 }

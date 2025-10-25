@@ -7,7 +7,7 @@ public class Gun : MonoBehaviour
 {
     public float damage = 10f;
     public float range = 100f;
-    public float bulletSpeed = 20f;
+    public float bulletSpeed = 1500f;
     public Camera playerCam;
     public ObjectPool bulletPool;
     public Transform shootingPoint;
@@ -36,9 +36,14 @@ public class Gun : MonoBehaviour
         
         GameObject bullet  = bulletPool.GetObject();
         bullet.transform.position = shootingPoint.position;
+        
         //bullet.transform.rotation = shootingPoint.transform.rotation;
         Vector3 direction = (targetPoint - shootingPoint.position).normalized;
-
+        Target target = hit.transform.GetComponent<Target>();
+        if (target != null)
+        {
+            target.TakeDamage(damage);
+        }
         if (Vector3.Distance(shootingPoint.position, targetPoint) < 0.1f)
         {
             direction = playerCam.transform.forward; 

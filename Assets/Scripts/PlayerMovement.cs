@@ -69,10 +69,11 @@ public class PlayerMovement : MonoBehaviour
         
         characterController.Move(moveDirection * Time.deltaTime);
 
-        if (Input.GetKey(KeyCode.R))
+        if (Input.GetKey(KeyCode.R) && gun.currentAmmo >= 0)
         {
             gun.Reload();
         }
+        
 
     }
 

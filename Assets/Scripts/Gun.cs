@@ -9,7 +9,7 @@ public class Gun : MonoBehaviour
     public float damage = 85f;
     public float range = 100f;
     public float bulletSpeed = 1500f;
-    public int currentClip, maxClipSize = 6, currentAmmo, maxAmmoSize = 86;
+    public int currentClip = 6, maxClipSize = 6, currentAmmo = 12, maxAmmoSize = 86;
     public Camera playerCam;
     public ObjectPool bulletPool;
     public Transform shootingPoint;
@@ -52,9 +52,9 @@ public class Gun : MonoBehaviour
 
             if (rb != null)
             {
-                rb.velocity = Vector3.zero;
+                rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
-                rb.velocity = bullet.transform.forward * bulletSpeed;
+                rb.linearVelocity = bullet.transform.forward * bulletSpeed;
             }
             
             Bullet bulletScript = bullet.GetComponent<Bullet>();
@@ -67,9 +67,12 @@ public class Gun : MonoBehaviour
 
             currentClip--;
         }
+        else
+        {
+            return;
+        }
     }
-
-    public void Reload()
+    /*public void Reload()
     {
         int reloadAmount = maxClipSize - currentClip;
         reloadAmount = (currentAmmo + reloadAmount) >= 0 ? reloadAmount : currentAmmo;
@@ -85,6 +88,31 @@ public class Gun : MonoBehaviour
             currentAmmo = maxAmmoSize;
         }
         
+    }
+  */
+    public void Reload()
+    {
+        if (currentClip == maxClipSize)
+        {
+            return;
+        }
+        if (currentAmmo <= 0)
+        {
+            return;
+        }
+        int ammoNeeded = maxClipSize - currentClip;
+        int ammoToTransfer = Mathf.Min(ammoNeeded, currentAmmo);
+        currentClip += ammoToTransfer;
+        currentAmmo -= ammoToTransfer;
+    }
+
+    public void AddAmmo(int ammoAmount)
+    {
+        currentAmmo += ammoAmount;
+        if (currentAmmo > maxAmmoSize)
+        {
+            currentAmmo = maxAmmoSize;
+        }
     }
    
 }

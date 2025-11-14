@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class AmmoPickup : MonoBehaviour
 {
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider collision)
     {
         Gun gun = collision.gameObject.GetComponentInChildren<Gun>();
         if (gun)
@@ -12,4 +12,5 @@ public class AmmoPickup : MonoBehaviour
             Destroy(gameObject);
         }
     }
+   
 }

@@ -8,13 +8,19 @@ public class PlayerMovement : MonoBehaviour
 {
     public Gun gun;
     public Camera playerCamera;
-    public float walkSpeed;
-    public float runSpeed;
-    public float jumpPower;
-    public float gravity;
-    public float defaultHeight;
-    public float crouchHeight;
-    public float crouchSpeed;
+    public float curSpeedX = 0;
+    public float startWalkSpeed = 13f;
+    public float startRunSpeed = 26f;
+    public float walkSpeed = 13f;
+    public float runSpeed = 26f;
+    public float jumpPower = 7f;
+    public float gravity = 10f;
+    public float defaultHeight = 2f;
+    public float crouchHeight = 1f;
+    public float jumpSpeedBoost = 1.5f;
+    private float currentSpeed;
+    private float speedSmoothVelocity;
+    
     private Vector3 moveDirection = Vector3.zero;
     private CharacterController characterController;
     
@@ -32,7 +38,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        float curSpeedX = (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical");
+        curSpeedX = (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical");
         float curSpeedY =  (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal");
         float movementDirectionY = moveDirection.y;
         moveDirection = (forward * curSpeedX) + (right * curSpeedY);
@@ -40,11 +46,13 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButton("Jump") && characterController.isGrounded)
         {
             moveDirection.y = jumpPower;
+          
         }
 
         else
         {
             moveDirection.y = movementDirectionY;
+            moveDirection.x *= jumpSpeedBoost;
         }
 
         if (!characterController.isGrounded)
@@ -55,16 +63,16 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftControl))
         {
             characterController.height = crouchHeight;
-            walkSpeed = crouchSpeed;
-            runSpeed = crouchSpeed;
+            walkSpeed = startWalkSpeed / 4;
+            runSpeed = startRunSpeed / 4;
         }
 
         else
         
         {
             characterController.height = defaultHeight;
-            walkSpeed = 6f;
-            runSpeed = 12f;
+            walkSpeed = startWalkSpeed;
+            runSpeed = startRunSpeed;
         }
         
         characterController.Move(moveDirection * Time.deltaTime);
@@ -74,7 +82,5 @@ public class PlayerMovement : MonoBehaviour
             gun.Reload();
         }
         
-
     }
-
 }

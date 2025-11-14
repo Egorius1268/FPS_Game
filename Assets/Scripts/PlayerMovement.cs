@@ -17,9 +17,7 @@ public class PlayerMovement : MonoBehaviour
     public float gravity = 10f;
     public float defaultHeight = 2f;
     public float crouchHeight = 1f;
-    public float jumpSpeedBoost = 1.5f;
-    private float currentSpeed;
-    private float speedSmoothVelocity;
+    public float jumpSpeedBoost = 2;
     
     private Vector3 moveDirection = Vector3.zero;
     private CharacterController characterController;
@@ -46,13 +44,12 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButton("Jump") && characterController.isGrounded)
         {
             moveDirection.y = jumpPower;
-          
+
         }
 
         else
         {
             moveDirection.y = movementDirectionY;
-            moveDirection.x *= jumpSpeedBoost;
         }
 
         if (!characterController.isGrounded)

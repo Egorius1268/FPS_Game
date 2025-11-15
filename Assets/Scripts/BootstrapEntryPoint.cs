@@ -16,7 +16,7 @@ namespace EntryPoint.Scripts
             var loadingDuration = 4f;
             while (loadingDuration > 0f)
             {
-                loadingDuration -= Time.deltaTime;
+                loadingDuration -= Time.unscaledDeltaTime;
                 Debug.Log("Loading...........");
                 yield return null;
             }

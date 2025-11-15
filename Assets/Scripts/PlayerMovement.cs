@@ -4,8 +4,19 @@ using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
-
+    
 {
+    private void Awake()
+    {
+        this.enabled = true;
+        Rigidbody rb = GetComponent<Rigidbody>();
+        rb.WakeUp();
+        PlayerMovement pm = gameObject.GetComponent<PlayerMovement>();
+        pm.enabled = true;
+        PlayerCamera cam = gameObject.GetComponent<PlayerCamera>();
+        cam.enabled = true;
+    }
+    
     public Gun gun;
     public Camera playerCamera;
     public float curSpeedX = 0;
@@ -26,8 +37,7 @@ public class PlayerMovement : MonoBehaviour
     
     {
         characterController = GetComponent<CharacterController>();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        CursorLock();
     }
     
     void Update()
@@ -79,5 +89,16 @@ public class PlayerMovement : MonoBehaviour
             gun.Reload();
         }
         
+    }
+
+    public void CursorLock()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+    public void CursorUnlock()
+    {
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
     }
 }

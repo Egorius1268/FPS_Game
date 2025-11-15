@@ -6,6 +6,11 @@ using UnityEngine.Rendering;
 
 public class Gun : MonoBehaviour
 {
+    private void Awake()
+    {
+        this.enabled = true;
+    }
+
     public float damage = 85f;
     public float range = 100f;
     public float bulletSpeed = 1500f;

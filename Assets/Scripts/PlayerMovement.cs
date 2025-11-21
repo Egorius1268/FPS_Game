@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -11,8 +12,6 @@ public class PlayerMovement : MonoBehaviour
         this.enabled = true;
         Rigidbody rb = GetComponent<Rigidbody>();
         rb.WakeUp();
-        PlayerMovement pm = gameObject.GetComponent<PlayerMovement>();
-        pm.enabled = true;
         PlayerCamera cam = gameObject.GetComponent<PlayerCamera>();
         cam.enabled = true;
     }
@@ -28,10 +27,11 @@ public class PlayerMovement : MonoBehaviour
     public float gravity = 10f;
     public float defaultHeight = 2f;
     public float crouchHeight = 1f;
-    public float jumpSpeedBoost = 2;
+    public float speedBoostPerJump = 2f;
     
     private Vector3 moveDirection = Vector3.zero;
     private CharacterController characterController;
+    private bool wasGrounded = false;
     
     void Start()
     
@@ -46,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        curSpeedX = (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical");
+        curSpeedX =  (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical");
         float curSpeedY =  (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal");
         float movementDirectionY = moveDirection.y;
         moveDirection = (forward * curSpeedX) + (right * curSpeedY);
@@ -54,7 +54,6 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButton("Jump") && characterController.isGrounded)
         {
             moveDirection.y = jumpPower;
-
         }
 
         else
@@ -62,10 +61,19 @@ public class PlayerMovement : MonoBehaviour
             moveDirection.y = movementDirectionY;
         }
 
+        if (characterController.isGrounded && !wasGrounded)
+        {
+            walkSpeed += speedBoostPerJump;
+            runSpeed +=  speedBoostPerJump;
+            //playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, walkSpeed, Time.deltaTime);
+        }
+       
         if (!characterController.isGrounded)
         {
             moveDirection.y -= gravity * Time.deltaTime;
         }
+        
+        wasGrounded = characterController.isGrounded;
         
         if (Input.GetKey(KeyCode.LeftControl))
         {
@@ -78,8 +86,6 @@ public class PlayerMovement : MonoBehaviour
         
         {
             characterController.height = defaultHeight;
-            walkSpeed = startWalkSpeed;
-            runSpeed = startRunSpeed;
         }
         
         characterController.Move(moveDirection * Time.deltaTime);
@@ -91,6 +97,7 @@ public class PlayerMovement : MonoBehaviour
         
     }
 
+    
     public void CursorLock()
     {
         Cursor.lockState = CursorLockMode.Locked;

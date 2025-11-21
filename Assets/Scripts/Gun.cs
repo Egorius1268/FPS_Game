@@ -47,7 +47,7 @@ public class Gun : MonoBehaviour
             Vector3 direction = (targetPoint - shootingPoint.position).normalized;
            
 
-            if (Vector3.Distance(shootingPoint.position, targetPoint) < 0.1f)
+            if (Vector3.Distance(shootingPoint.position, targetPoint) < 0.5f || direction == Vector3.zero)
             {
                 direction = playerCam.transform.forward; 
             }
